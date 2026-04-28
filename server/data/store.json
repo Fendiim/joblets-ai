@@ -1,0 +1,647 @@
+{
+  "users": [
+    {
+      "id": "d4e1eb87-80ff-4c40-9492-6b69b8ce58b6",
+      "name": "Faheem Jasat",
+      "email": "faheem@email.com",
+      "password": "password",
+      "gmailConnected": true,
+      "scanCursor": 8,
+      "createdAt": "2026-04-10T21:39:07.502Z",
+      "refreshSchedule": [
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false
+      ],
+      "currentRefreshIndex": 0,
+      "emailConnected": true
+    },
+    {
+      "id": "06e41699-312c-45a2-97c1-52e707600b34",
+      "name": "Greg Butt",
+      "email": "faheem1@email.com",
+      "password": "password",
+      "gmailConnected": true,
+      "scanCursor": 16,
+      "createdAt": "2026-04-11T03:07:25.252Z",
+      "refreshSchedule": [
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "currentRefreshIndex": 4,
+      "emailConnected": true
+    },
+    {
+      "id": "12549795-a75f-4fa5-a89d-4596ae75d7f1",
+      "name": "greg pawson",
+      "email": "greg@gmail.com",
+      "password": "greg",
+      "gmailConnected": true,
+      "scanCursor": 0,
+      "refreshSchedule": [
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "currentRefreshIndex": 0,
+      "createdAt": "2026-04-28T03:07:13.741Z",
+      "emailConnected": true
+    },
+    {
+      "id": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "name": "hh",
+      "email": "dd@gmail.com",
+      "password": "dd",
+      "emailConnected": true,
+      "scanCursor": 6,
+      "refreshSchedule": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "currentRefreshIndex": 3,
+      "createdAt": "2026-04-28T03:22:17.550Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": "99fb368b-9383-4f82-b407-26640d56e832",
+      "userId": "d4e1eb87-80ff-4c40-9492-6b69b8ce58b6",
+      "company": "Google",
+      "role": "Software Engineer",
+      "dateApplied": "2026-03-02",
+      "status": "Interview Invitation",
+      "classification": "Interview Invitation",
+      "confidence": 0.93,
+      "fingerprint": "google:softwareengineer",
+      "sourceEmailIds": [
+        "email-google-confirmation",
+        "email-google-interview"
+      ],
+      "lastEmailDate": "2026-03-10",
+      "subject": "Next steps for Software Engineer",
+      "snippet": "Thank you again for your application. We would like to invite you to an interview for the Software Engineer role at Google.",
+      "createdAt": "2026-04-10T21:40:11.142Z",
+      "updatedAt": "2026-04-10T21:40:43.182Z"
+    },
+    {
+      "id": "e7167cf7-dc16-4d77-854a-05cb8316381b",
+      "userId": "d4e1eb87-80ff-4c40-9492-6b69b8ce58b6",
+      "company": "Figma",
+      "role": "Product Designer",
+      "dateApplied": "2026-03-05",
+      "status": "Rejection",
+      "classification": "Rejection",
+      "confidence": 0.95,
+      "fingerprint": "figma:productdesigner",
+      "sourceEmailIds": [
+        "email-figma-interview",
+        "email-figma-rejection"
+      ],
+      "lastEmailDate": "2026-03-15",
+      "subject": "Update on Product Designer role",
+      "snippet": "Thank you for taking the time to interview with us. We regret to inform you that we are moving ahead with other candidates for the Product Designer role at Figm",
+      "createdAt": "2026-04-10T21:40:11.147Z",
+      "updatedAt": "2026-04-10T21:40:43.208Z"
+    },
+    {
+      "id": "678bf7f3-17b9-454d-8b57-6e94f13bf12c",
+      "userId": "d4e1eb87-80ff-4c40-9492-6b69b8ce58b6",
+      "company": "Anthropic",
+      "role": "AI Researcher",
+      "dateApplied": "2026-03-06",
+      "status": "Rejection",
+      "classification": "Rejection",
+      "confidence": 0.95,
+      "fingerprint": "anthropic:airesearcher",
+      "sourceEmailIds": [
+        "email-anthropic-rejection"
+      ],
+      "lastEmailDate": "2026-03-06",
+      "subject": "Update on your AI Researcher application",
+      "snippet": "We regret to inform you that we will not be moving forward with your application for AI Researcher at Anthropic. We appreciate your interest.",
+      "createdAt": "2026-04-10T21:40:11.153Z",
+      "updatedAt": "2026-04-10T21:40:11.153Z"
+    },
+    {
+      "id": "6e024820-8b65-4aca-b3dd-dc91c7779e93",
+      "userId": "d4e1eb87-80ff-4c40-9492-6b69b8ce58b6",
+      "company": "Stripe",
+      "role": "Backend Engineer",
+      "dateApplied": "2026-03-11",
+      "status": "Application Confirmation",
+      "classification": "Application Confirmation",
+      "confidence": 0.9,
+      "fingerprint": "stripe:backendengineer",
+      "sourceEmailIds": [
+        "email-stripe-confirmation"
+      ],
+      "lastEmailDate": "2026-03-11",
+      "subject": "Thanks for applying to Backend Engineer",
+      "snippet": "Thank you for applying to Backend Engineer at Stripe. This email confirms we received your application.",
+      "createdAt": "2026-04-10T21:40:43.194Z",
+      "updatedAt": "2026-04-10T21:40:43.194Z"
+    },
+    {
+      "id": "fc031e01-baaf-4c63-b32e-52afd0b4f8bf",
+      "userId": "d4e1eb87-80ff-4c40-9492-6b69b8ce58b6",
+      "company": "OpenAI",
+      "role": "Applied AI Engineer",
+      "dateApplied": "2026-03-12",
+      "status": "Offer",
+      "classification": "Offer",
+      "confidence": 0.96,
+      "fingerprint": "openai:appliedaiengineer",
+      "sourceEmailIds": [
+        "email-openai-offer"
+      ],
+      "lastEmailDate": "2026-03-12",
+      "subject": "Offer for Applied AI Engineer",
+      "snippet": "We are excited to extend an offer for Applied AI Engineer at OpenAI. Please review the attached compensation details and let us know if you have any questions.",
+      "createdAt": "2026-04-10T21:40:43.200Z",
+      "updatedAt": "2026-04-10T21:40:43.200Z"
+    },
+    {
+      "id": "7f77bf4b-6bbb-4c83-8e99-5416a514cded",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Google",
+      "role": "Software Engineer",
+      "dateApplied": "2026-03-02",
+      "status": "Interview Invitation",
+      "classification": "Interview Invitation",
+      "fingerprint": "google:softwareengineer",
+      "portalLink": "https://jobs.google.com/candidate/google-interview",
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-google-interview",
+      "sourceEmailIds": [
+        "email-google-confirmation",
+        "email-google-interview"
+      ],
+      "lastEmailDate": "2026-03-10",
+      "subject": "Next steps for Software Engineer",
+      "snippet": "Thank you again for your application. We would like to invite you to an interview for the Software Engineer role at Google. You can also check your application ",
+      "createdAt": "2026-04-11T03:07:33.181Z",
+      "updatedAt": "2026-04-22T16:56:23.998Z"
+    },
+    {
+      "id": "8872d427-4bd6-4b9c-aa0b-a83de4c3a976",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Figma",
+      "role": "Product Designer",
+      "dateApplied": "2026-03-05",
+      "status": "Rejection",
+      "classification": "Rejection",
+      "fingerprint": "figma:productdesigner",
+      "portalLink": null,
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-figma-rejection",
+      "sourceEmailIds": [
+        "email-figma-interview",
+        "email-figma-rejection"
+      ],
+      "lastEmailDate": "2026-03-15",
+      "subject": "Update on Product Designer role",
+      "snippet": "Thank you for taking the time to interview with us. We regret to inform you that we are moving ahead with other candidates for the Product Designer role at Figm",
+      "createdAt": "2026-04-11T03:07:33.186Z",
+      "updatedAt": "2026-04-22T16:56:24.003Z"
+    },
+    {
+      "id": "d4974aa4-cd1d-486c-86fb-8dfc1ffc993d",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Anthropic",
+      "role": "AI Researcher",
+      "dateApplied": "2026-03-06",
+      "status": "Rejection",
+      "classification": "Rejection",
+      "fingerprint": "anthropic:airesearcher",
+      "portalLink": null,
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-anthropic-rejection",
+      "sourceEmailIds": [
+        "email-anthropic-rejection"
+      ],
+      "lastEmailDate": "2026-03-06",
+      "subject": "Update on your AI Researcher application",
+      "snippet": "We regret to inform you that we will not be moving forward with your application for AI Researcher at Anthropic. We appreciate your interest.",
+      "createdAt": "2026-04-11T03:07:33.191Z",
+      "updatedAt": "2026-04-11T03:07:33.192Z"
+    },
+    {
+      "id": "d1d37b86-1f29-4853-a502-940b2e6e470e",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Stripe",
+      "role": "Backend Engineer",
+      "dateApplied": "2026-03-11",
+      "status": "Application Confirmation",
+      "classification": "Application Confirmation",
+      "fingerprint": "stripe:backendengineer",
+      "portalLink": "https://jobs.stripe.com/candidate/applications/backend-engineer-204",
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-stripe-confirmation",
+      "sourceEmailIds": [
+        "email-stripe-confirmation"
+      ],
+      "lastEmailDate": "2026-03-11",
+      "subject": "Thanks for applying to Backend Engineer",
+      "snippet": "Thank you for applying to Backend Engineer at Stripe. This email confirms we received your application. Manage your submission here: https://jobs.stripe.com/can",
+      "createdAt": "2026-04-11T03:07:45.827Z",
+      "updatedAt": "2026-04-11T03:07:45.827Z"
+    },
+    {
+      "id": "694d3f33-4e9b-44f7-ba16-d2da7ced2b8e",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "OpenAI",
+      "role": "Applied AI Engineer",
+      "dateApplied": "2026-03-12",
+      "status": "Offer",
+      "classification": "Offer",
+      "fingerprint": "openai:appliedaiengineer",
+      "portalLink": "https://jobs.openai.com/candidate/offer/applied-ai-engineer-778",
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-openai-offer",
+      "sourceEmailIds": [
+        "email-openai-offer"
+      ],
+      "lastEmailDate": "2026-03-12",
+      "subject": "Offer for Applied AI Engineer",
+      "snippet": "We are excited to extend an offer for Applied AI Engineer at OpenAI. Please review the attached compensation details and your candidate portal at https://jobs.o",
+      "createdAt": "2026-04-11T03:07:45.833Z",
+      "updatedAt": "2026-04-11T03:07:45.834Z"
+    },
+    {
+      "id": "84a9e1ab-d631-42f2-8363-a5c84a7c8a07",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Notion",
+      "role": "Product Marketing Manager",
+      "dateApplied": "2026-03-16",
+      "status": "Interview Invitation",
+      "classification": "Interview Invitation",
+      "fingerprint": "notion:productmarketingmanager",
+      "portalLink": "https://jobs.notion.com/candidate/applications/product-marketing-manager-notion-interview.",
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-notion-interview",
+      "sourceEmailIds": [
+        "email-notion-confirmation",
+        "email-notion-interview"
+      ],
+      "lastEmailDate": "2026-03-20",
+      "subject": "Interview invitation for Product Marketing Manager at Notion",
+      "snippet": "We would like to invite you to an interview for the Product Marketing Manager role at Notion. Please confirm your availability in the candidate portal at https:",
+      "createdAt": "2026-04-22T16:56:22.527Z",
+      "updatedAt": "2026-04-22T16:56:24.005Z"
+    },
+    {
+      "id": "bf8d8f59-c47f-493b-90b6-82c7cb220391",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Vercel",
+      "role": "Full Stack Engineer",
+      "dateApplied": "2026-03-17",
+      "status": "Application Confirmation",
+      "classification": "Application Confirmation",
+      "fingerprint": "vercel:fullstackengineer",
+      "portalLink": null,
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-vercel-confirmation",
+      "sourceEmailIds": [
+        "email-vercel-confirmation"
+      ],
+      "lastEmailDate": "2026-03-17",
+      "subject": "Application received for Full Stack Engineer at Vercel",
+      "snippet": "Thank you for applying to Full Stack Engineer at Vercel. Our recruiting team will be in touch if there is a fit.",
+      "createdAt": "2026-04-22T16:56:22.553Z",
+      "updatedAt": "2026-04-22T16:56:22.553Z"
+    },
+    {
+      "id": "790412cf-9a7c-4bfe-854e-e4f8589e92c6",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Airtable",
+      "role": "Program Manager",
+      "dateApplied": "2026-03-22",
+      "status": "Application Confirmation",
+      "classification": "Application Confirmation",
+      "fingerprint": "airtable:programmanager",
+      "portalLink": "https://jobs.airtable.com/candidate/applications/program-manager-airtable-confirmation",
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-airtable-confirmation",
+      "sourceEmailIds": [
+        "email-airtable-confirmation"
+      ],
+      "lastEmailDate": "2026-03-22",
+      "subject": "Application received for Program Manager at Airtable",
+      "snippet": "Thank you for applying to Program Manager at Airtable. You can review your application at https://jobs.airtable.com/candidate/applications/program-manager-airta",
+      "createdAt": "2026-04-25T17:32:35.419Z",
+      "updatedAt": "2026-04-25T17:32:35.426Z"
+    },
+    {
+      "id": "ec3034a1-f84b-4b49-90c1-74c97bb0db3a",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "company": "Microsoft",
+      "role": "Cloud Solutions Architect",
+      "dateApplied": "2026-03-23",
+      "status": "Application Confirmation",
+      "classification": "Application Confirmation",
+      "fingerprint": "microsoft:cloudsolutionsarchitect",
+      "portalLink": null,
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-microsoft-confirmation",
+      "sourceEmailIds": [
+        "email-microsoft-confirmation"
+      ],
+      "lastEmailDate": "2026-03-23",
+      "subject": "Application received for Cloud Solutions Architect at Microsoft",
+      "snippet": "Thank you for applying to Cloud Solutions Architect at Microsoft. Our recruiting team will be in touch if there is a fit.",
+      "createdAt": "2026-04-25T17:32:35.443Z",
+      "updatedAt": "2026-04-25T17:32:35.443Z"
+    },
+    {
+      "id": "f8297c79-7dc9-4cb0-be0a-b996af65a903",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "company": "Google",
+      "role": "Software Engineer",
+      "dateApplied": "2026-03-02",
+      "status": "Interview Invitation",
+      "classification": "Interview Invitation",
+      "fingerprint": "google:softwareengineer",
+      "portalLink": "https://jobs.google.com/candidate/applications/software-engineer-google-interview.",
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-google-interview",
+      "sourceEmailIds": [
+        "email-google-confirmation",
+        "email-google-interview"
+      ],
+      "lastEmailDate": "2026-03-10",
+      "subject": "Next steps for Software Engineer at Google",
+      "snippet": "We would like to invite you to an interview for the Software Engineer role at Google. Please confirm your availability in the candidate portal at https://jobs.g",
+      "createdAt": "2026-04-28T03:23:00.765Z",
+      "updatedAt": "2026-04-28T03:23:20.060Z"
+    },
+    {
+      "id": "7295261b-91fe-4beb-9318-704e3e0ba1b3",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "company": "Figma",
+      "role": "Product Designer",
+      "dateApplied": "2026-03-05",
+      "status": "Interview Invitation",
+      "classification": "Interview Invitation",
+      "fingerprint": "figma:productdesigner",
+      "portalLink": null,
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-figma-interview",
+      "sourceEmailIds": [
+        "email-figma-interview"
+      ],
+      "lastEmailDate": "2026-03-05",
+      "subject": "Interview invitation for Product Designer at Figma",
+      "snippet": "We would like to invite you to an interview for the Product Designer role at Figma. Please reply with your availability for next week.",
+      "createdAt": "2026-04-28T03:23:08.183Z",
+      "updatedAt": "2026-04-28T03:23:08.183Z"
+    },
+    {
+      "id": "b055f4cb-d6f5-4027-808e-995de646c7db",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "company": "Anthropic",
+      "role": "AI Researcher",
+      "dateApplied": "2026-03-06",
+      "status": "Rejection",
+      "classification": "Rejection",
+      "fingerprint": "anthropic:airesearcher",
+      "portalLink": null,
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-anthropic-rejection",
+      "sourceEmailIds": [
+        "email-anthropic-rejection"
+      ],
+      "lastEmailDate": "2026-03-06",
+      "subject": "Update on your AI Researcher application at Anthropic",
+      "snippet": "We regret to inform you that we will not be moving forward with your application for AI Researcher at Anthropic. We appreciate your interest and the time you in",
+      "createdAt": "2026-04-28T03:23:08.187Z",
+      "updatedAt": "2026-04-28T03:23:08.187Z"
+    },
+    {
+      "id": "cd5b6fc7-78d4-49e5-8e56-da46dd3a772f",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "company": "Stripe",
+      "role": "Backend Engineer",
+      "dateApplied": "2026-03-11",
+      "status": "Application Confirmation",
+      "classification": "Application Confirmation",
+      "fingerprint": "stripe:backendengineer",
+      "portalLink": "https://jobs.stripe.com/candidate/applications/backend-engineer-stripe-confirmation",
+      "emailLink": "https://mail.google.com/mail/u/0/#inbox/email-stripe-confirmation",
+      "sourceEmailIds": [
+        "email-stripe-confirmation"
+      ],
+      "lastEmailDate": "2026-03-11",
+      "subject": "Thanks for applying to Backend Engineer at Stripe",
+      "snippet": "Thank you for applying to Backend Engineer at Stripe. You can review your application at https://jobs.stripe.com/candidate/applications/backend-engineer-stripe-",
+      "createdAt": "2026-04-28T03:23:20.064Z",
+      "updatedAt": "2026-04-28T03:23:28.610Z"
+    }
+  ],
+  "activities": [
+    {
+      "id": "191731df-5539-4abb-b076-055a0203f638",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "type": "job_added",
+      "company": "Stripe",
+      "role": "Backend Engineer",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Backend Engineer at Stripe as Application Confirmation.",
+      "createdAt": "2026-04-28T03:23:20.064Z"
+    },
+    {
+      "id": "4b5752c7-b1e8-4e95-aa73-224659cfaab2",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "type": "status_updated",
+      "company": "Google",
+      "role": "Software Engineer",
+      "previousStatus": "Application Confirmation",
+      "nextStatus": "Interview Invitation",
+      "message": "Google moved from Application Confirmation to Interview Invitation.",
+      "createdAt": "2026-04-28T03:23:20.060Z"
+    },
+    {
+      "id": "24d49ea8-a369-4070-a41f-7b5bf2e38b75",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "type": "job_added",
+      "company": "Anthropic",
+      "role": "AI Researcher",
+      "previousStatus": null,
+      "nextStatus": "Rejection",
+      "message": "Added AI Researcher at Anthropic as Rejection.",
+      "createdAt": "2026-04-28T03:23:08.187Z"
+    },
+    {
+      "id": "6153cb52-2602-477d-b92e-fafc8a1db777",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "type": "job_added",
+      "company": "Figma",
+      "role": "Product Designer",
+      "previousStatus": null,
+      "nextStatus": "Interview Invitation",
+      "message": "Added Product Designer at Figma as Interview Invitation.",
+      "createdAt": "2026-04-28T03:23:08.183Z"
+    },
+    {
+      "id": "316cb756-45b2-47a0-8a99-9a70bc0050ff",
+      "userId": "bbf21aa4-9172-40ef-85f0-dbfb0371754a",
+      "type": "job_added",
+      "company": "Google",
+      "role": "Software Engineer",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Software Engineer at Google as Application Confirmation.",
+      "createdAt": "2026-04-28T03:23:00.766Z"
+    },
+    {
+      "id": "812cdcfe-c3d8-4702-bdf7-bf2cf7777d72",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Microsoft",
+      "role": "Cloud Solutions Architect",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Cloud Solutions Architect at Microsoft as Application Confirmation.",
+      "createdAt": "2026-04-25T17:32:35.443Z"
+    },
+    {
+      "id": "6eacbf3b-66f3-428f-bc61-b80953753bb1",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Airtable",
+      "role": "Program Manager",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Program Manager at Airtable as Application Confirmation.",
+      "createdAt": "2026-04-25T17:32:35.427Z"
+    },
+    {
+      "id": "2974aaaf-7b97-4049-a57e-2e64026e0e66",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "status_updated",
+      "company": "Notion",
+      "role": "Product Marketing Manager",
+      "previousStatus": "Application Confirmation",
+      "nextStatus": "Interview Invitation",
+      "message": "Notion moved from Application Confirmation to Interview Invitation.",
+      "createdAt": "2026-04-22T16:56:24.006Z"
+    },
+    {
+      "id": "a7234854-e92a-4249-9bee-6e12b9afce94",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Vercel",
+      "role": "Full Stack Engineer",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Full Stack Engineer at Vercel as Application Confirmation.",
+      "createdAt": "2026-04-22T16:56:22.553Z"
+    },
+    {
+      "id": "c3aca90c-cde8-46b2-8169-2f9ca6cb9f68",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Notion",
+      "role": "Product Marketing Manager",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Product Marketing Manager at Notion as Application Confirmation.",
+      "createdAt": "2026-04-22T16:56:22.532Z"
+    },
+    {
+      "id": "adc0c2f6-1341-4ad6-ba95-ba9062570907",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "status_updated",
+      "company": "Figma",
+      "role": "Product Designer",
+      "previousStatus": "Interview Invitation",
+      "nextStatus": "Rejection",
+      "message": "Figma moved from Interview Invitation to Rejection.",
+      "createdAt": "2026-04-11T03:07:45.841Z"
+    },
+    {
+      "id": "30e186a2-40d4-4d9c-a47a-a46454239fc0",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "OpenAI",
+      "role": "Applied AI Engineer",
+      "previousStatus": null,
+      "nextStatus": "Offer",
+      "message": "Added Applied AI Engineer at OpenAI as Offer.",
+      "createdAt": "2026-04-11T03:07:45.834Z"
+    },
+    {
+      "id": "116234a4-f235-4e7a-a1cd-d4d7fcf1b3bf",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Stripe",
+      "role": "Backend Engineer",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Backend Engineer at Stripe as Application Confirmation.",
+      "createdAt": "2026-04-11T03:07:45.827Z"
+    },
+    {
+      "id": "43d89c74-36cc-4c00-beb5-8dd9ab64fbe9",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "status_updated",
+      "company": "Google",
+      "role": "Software Engineer",
+      "previousStatus": "Application Confirmation",
+      "nextStatus": "Interview Invitation",
+      "message": "Google moved from Application Confirmation to Interview Invitation.",
+      "createdAt": "2026-04-11T03:07:45.821Z"
+    },
+    {
+      "id": "2da57668-03a4-4d59-8494-f0de4818cf4c",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Anthropic",
+      "role": "AI Researcher",
+      "previousStatus": null,
+      "nextStatus": "Rejection",
+      "message": "Added AI Researcher at Anthropic as Rejection.",
+      "createdAt": "2026-04-11T03:07:33.192Z"
+    },
+    {
+      "id": "3d7e7de0-3552-4eea-aa31-36e66c9468a3",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Figma",
+      "role": "Product Designer",
+      "previousStatus": null,
+      "nextStatus": "Interview Invitation",
+      "message": "Added Product Designer at Figma as Interview Invitation.",
+      "createdAt": "2026-04-11T03:07:33.186Z"
+    },
+    {
+      "id": "ff9992be-bb92-45ac-a79e-0f23c5aa3b80",
+      "userId": "06e41699-312c-45a2-97c1-52e707600b34",
+      "type": "job_added",
+      "company": "Google",
+      "role": "Software Engineer",
+      "previousStatus": null,
+      "nextStatus": "Application Confirmation",
+      "message": "Added Software Engineer at Google as Application Confirmation.",
+      "createdAt": "2026-04-11T03:07:33.181Z"
+    }
+  ]
+}
