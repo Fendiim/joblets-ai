@@ -292,14 +292,15 @@ function WrappedCard({
       );
     }
 
-    if (slide.kind === "social-share") {
+    if (slide.kind === "share-cta") {
       return (
         <>
-          <p className="wrapped-card-title wrapped-card-title-share">{slide.title}</p>
-          <p className="wrapped-social-share-tag">{slide.body}</p>
+          <p className="wrapped-card-title">{slide.title}</p>
+          <h2 className="wrapped-card-emphasis">{slide.emphasis}</h2>
           <p className="wrapped-card-body">
-            Turn your job search into something polished enough to post, share, and remember.
+            Your job search, quantified. Download this slide and share it — you put in the work.
           </p>
+          <p className="wrapped-share-hashtag">{slide.hashtag}</p>
         </>
       );
     }
@@ -442,38 +443,19 @@ function WrappedCard({
       );
     }
 
-    if (slide.kind === "social-share") {
+    if (slide.kind === "share-cta") {
       return (
-        <div className="wrapped-social-post">
-          <div className="wrapped-social-post-shell">
-            <div className="wrapped-social-post-header">
-              <div className="wrapped-social-avatar" aria-hidden="true">
-                {slide.post.profileName.slice(0, 1)}
+        <div className="wrapped-share-cta-visual">
+          <div className="wrapped-share-stat-grid">
+            {slide.stats.map((stat) => (
+              <div key={stat.label} className="wrapped-share-stat-pill">
+                <span>{stat.label}</span>
+                <strong>{stat.value}</strong>
               </div>
-              <div className="wrapped-social-meta">
-                <strong>{slide.post.profileName}</strong>
-                <span>LinkedIn mock post</span>
-              </div>
-            </div>
-
-            <p className="wrapped-social-caption">{slide.post.caption}</p>
-
-            <div className="wrapped-social-preview">
-              <div className="wrapped-social-preview-gradient" aria-hidden="true" />
-              <div className="wrapped-social-preview-content">
-                <p>{slide.post.previewEyebrow}</p>
-                <strong>{slide.post.previewTitle}</strong>
-                <span>{slide.post.previewSubtitle}</span>
-                <small>{slide.post.previewAccent}</small>
-              </div>
-            </div>
-
-            <p className="wrapped-social-hashtag">{slide.post.hashtag}</p>
-
-            <div className="wrapped-social-engagement">
-              <span>{slide.post.likes} likes</span>
-              <span>{slide.post.comments} comments</span>
-            </div>
+            ))}
+          </div>
+          <div className="wrapped-share-persona-badge">
+            {slide.persona}
           </div>
         </div>
       );
@@ -1650,7 +1632,7 @@ function App() {
   }, [applications, filters]);
 
   const wrappedData = useMemo(() => computeWrappedData(applications), [applications]);
-  const wrappedSlides = useMemo(() => buildWrappedSlides(wrappedData), [wrappedData]);
+  const wrappedSlides = useMemo(() => buildWrappedSlides(wrappedData, user?.name), [wrappedData, user?.name]);
 
   if (!user) {
     return (

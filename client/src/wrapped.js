@@ -1,3 +1,5 @@
+import html2canvas from "html2canvas";
+
 const statusLabelMap = {
   "Application Confirmation": "Applied",
   "Interview Invitation": "Interview",
@@ -179,18 +181,63 @@ function buildCompanyLogo(company = "") {
 
 function inferFocusFromRole(role = "") {
   const lower = role.toLowerCase();
+  let bestLabel = "Generalist Search";
+  let bestScore = 0;
+  let hasTie = false;
 
   for (const group of focusGroups) {
-    if (group.keywords.some((keyword) => lower.includes(keyword))) {
-      return group.label;
+    const score = group.keywords.reduce((count, keyword) => {
+      return count + (lower.includes(keyword) ? 1 : 0);
+    }, 0);
+
+    if (score > bestScore) {
+      bestLabel = group.label;
+      bestScore = score;
+      hasTie = false;
+    } else if (score > 0 && score === bestScore) {
+      hasTie = true;
     }
   }
 
-  return "Generalist Search";
+  if (bestScore === 0 || hasTie) {
+    return "Generalist Search";
+  }
+
+  return bestLabel;
 }
 
 function inferCompanyType(company = "") {
-  return companyTypeMap[company] || "technology companies";
+  if (companyTypeMap[company]) {
+    return companyTypeMap[company];
+  }
+
+  const lower = company.toLowerCase();
+
+  if (["health", "med", "pharma", "bio"].some((keyword) => lower.includes(keyword))) {
+    return "healthcare companies";
+  }
+
+  if (["bank", "capital", "finance", "invest", "fund"].some((keyword) => lower.includes(keyword))) {
+    return "financial services companies";
+  }
+
+  if (["consult", "advisory"].some((keyword) => lower.includes(keyword))) {
+    return "consulting firms";
+  }
+
+  if (["studio", "games"].some((keyword) => lower.includes(keyword))) {
+    return "gaming and entertainment companies";
+  }
+
+  if (["edu", "learn"].some((keyword) => lower.includes(keyword))) {
+    return "edtech companies";
+  }
+
+  if (["logistics", "supply", "freight"].some((keyword) => lower.includes(keyword))) {
+    return "logistics companies";
+  }
+
+  return "technology companies";
 }
 
 function formatResponseMomentum(responseRate) {
@@ -553,10 +600,12 @@ export function computeWrappedData(applications = []) {
   };
 }
 
-export function buildWrappedSlides(wrapped) {
+export function buildWrappedSlides(wrapped, userName = "You") {
   if (!wrapped || wrapped.empty) {
     return [];
   }
+
+  const shareMetrics = buildShareMetrics(wrapped);
 
   return [
     {
@@ -648,22 +697,20 @@ export function buildWrappedSlides(wrapped) {
     },
     {
       id: "final",
-      kind: "social-share",
+      kind: "share-cta",
       tone: slideToneMap.final,
-      eyebrow: "Share It",
-      title: "Share your Joblets Wrapped",
-      body: "#JobletsWrapped",
-      post: {
-        profileName: "You",
-        likes: buildShareMetrics(wrapped).likes,
-        comments: buildShareMetrics(wrapped).comments,
-        previewEyebrow: "Joblets Wrapped",
-        previewTitle: `${wrapped.totalApplications} applications`,
-        previewSubtitle: wrapped.topFocus.label,
-        previewAccent: wrapped.persona,
-        caption: "Just used Joblets Wrapped to analyze my job search \u{1F447}",
-        hashtag: "#JobletsWrapped"
-      }
+      eyebrow: "Your 2024 Wrapped",
+      title: "You showed up.",
+      emphasis: `${wrapped.totalApplications} applications`,
+      stats: [
+        { label: "Companies", value: wrapped.distinctCompanyCount },
+        { label: "Interviews", value: wrapped.statusCounts.Interview },
+        { label: "Offers", value: wrapped.statusCounts.Offer },
+        { label: "Response Rate", value: `${wrapped.responseRatePercent}%` }
+      ],
+      persona: wrapped.persona,
+      cta: "Download & share your Wrapped",
+      hashtag: "#JobletsWrapped"
     }
   ];
 }
@@ -699,8 +746,8 @@ export async function downloadWrappedSlide(cardElement, slide, slideIndex, total
   });
 
   const canvas = document.createElement("canvas");
-  canvas.width = 1080;
-  canvas.height = 1920;
+  canvas.width = 1920;
+  canvas.height = 1080;
   const ctx = canvas.getContext("2d");
 
   if (!ctx) {
@@ -727,8 +774,8 @@ export async function downloadWrappedSlide(cardElement, slide, slideIndex, total
   ctx.fillStyle = orbTwo;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const horizontalPadding = 84;
-  const verticalPadding = 110;
+  const horizontalPadding = 110;
+  const verticalPadding = 84;
   const availableWidth = canvas.width - horizontalPadding * 2;
   const availableHeight = canvas.height - verticalPadding * 2;
   const fitScale = Math.min(availableWidth / renderedCard.width, availableHeight / renderedCard.height);
@@ -737,9 +784,27 @@ export async function downloadWrappedSlide(cardElement, slide, slideIndex, total
   const drawX = (canvas.width - drawWidth) / 2;
   const drawY = (canvas.height - drawHeight) / 2;
 
+  const exportRadius = 34 * (drawWidth / renderedCard.width);
+  ctx.save();
+  ctx.beginPath();
+  if (ctx.roundRect) {
+    ctx.roundRect(drawX, drawY, drawWidth, drawHeight, exportRadius);
+  } else {
+    const r = exportRadius;
+    ctx.moveTo(drawX + r, drawY);
+    ctx.lineTo(drawX + drawWidth - r, drawY);
+    ctx.quadraticCurveTo(drawX + drawWidth, drawY, drawX + drawWidth, drawY + r);
+    ctx.lineTo(drawX + drawWidth, drawY + drawHeight - r);
+    ctx.quadraticCurveTo(drawX + drawWidth, drawY + drawHeight, drawX + drawWidth - r, drawY + drawHeight);
+    ctx.lineTo(drawX + r, drawY + drawHeight);
+    ctx.quadraticCurveTo(drawX, drawY + drawHeight, drawX, drawY + drawHeight - r);
+    ctx.lineTo(drawX, drawY + r);
+    ctx.quadraticCurveTo(drawX, drawY, drawX + r, drawY);
+    ctx.closePath();
+  }
+  ctx.clip();
   ctx.drawImage(renderedCard, drawX, drawY, drawWidth, drawHeight);
-
+  ctx.restore();
   triggerCanvasDownload(canvas, buildExportFileName(slide, slideIndex, totalSlides));
 }
-import html2canvas from "html2canvas";
 
