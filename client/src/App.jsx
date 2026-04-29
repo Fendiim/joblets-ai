@@ -144,7 +144,7 @@ function AuthView({ authMode, authForm, loading, feedback, onAuthModeChange, onA
   return (
     <div className="auth-shell">
       <div className="auth-hero">
-        <h1>Joblets</h1>
+        <h1>Joblets.ai</h1>
         <p className="hero-copy">
           Track your job applications automatically {"\u2014"} no spreadsheets required.
         </p>
@@ -1652,7 +1652,7 @@ function App() {
     <div className={`app-shell ${route === WRAPPED_ROUTE ? "app-shell-wrapped" : ""}`}>
       <header className={`topbar ${route === WRAPPED_ROUTE ? "topbar-wrapped" : ""}`}>
         <div className="topbar-brand">
-          <h1>Joblets</h1>
+          <h1>Joblets.ai</h1>
           <p className="topbar-subtitle">Track your job applications effortlessly</p>
         </div>
 
