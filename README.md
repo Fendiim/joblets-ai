@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Joblets
 
 A full-stack web app that simulates email-powered job application tracking. Users can sign up, connect their email, refresh their inbox, classify job-related emails with a mock AI layer, extract structured application data, prevent duplicates, and manage everything from a responsive dashboard.
@@ -97,3 +98,6 @@ The Express API runs on:
 - This project intentionally uses a lightweight mock AI function instead of requiring an external API key.
 - Storage is file-backed for demo convenience and resets cleanly by editing `server/data/store.json`.
 - Passwords are stored plainly because the app is intentionally non-production and built for demonstration.
+=======
+# joblets-ai
+>>>>>>> cc7c7ebc5186a12e28d7d0c2ac56b4987e5f4e1e

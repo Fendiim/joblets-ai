@@ -32,6 +32,33 @@ const focusGroups = [
   }
 ];
 
+const companyTypeMap = {
+  Google: "established tech companies",
+  Microsoft: "established tech companies",
+  Netflix: "consumer tech companies",
+  OpenAI: "AI labs",
+  Anthropic: "AI labs",
+  Stripe: "fintech companies",
+  Ramp: "fintech companies",
+  Plaid: "fintech companies",
+  Brex: "fintech companies",
+  Coinbase: "fintech companies",
+  Figma: "product design companies",
+  Canva: "product design companies",
+  Notion: "collaboration software companies",
+  Slack: "collaboration software companies",
+  Asana: "collaboration software companies",
+  Loom: "collaboration software companies",
+  Vercel: "developer platform companies",
+  Datadog: "developer platform companies",
+  Snowflake: "data infrastructure companies",
+  Airtable: "workflow software companies",
+  Dropbox: "workflow software companies",
+  Atlassian: "enterprise software companies",
+  Linear: "productivity software companies",
+  Duolingo: "consumer app companies"
+};
+
 const slideToneMap = {
   total: "violet",
   company: "iris",
@@ -136,9 +163,10 @@ function buildCompanyLogo(company = "") {
           <stop offset="100%" stop-color="${preset.end}" />
         </linearGradient>
       </defs>
-      <rect width="240" height="240" rx="64" fill="url(#g)" />
-      <circle cx="188" cy="54" r="26" fill="rgba(255,255,255,0.18)" />
-      <text x="120" y="136" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="112" font-weight="700" fill="white">${preset.short}</text>
+      <circle cx="120" cy="120" r="116" fill="url(#g)" />
+      <circle cx="120" cy="120" r="115" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+      <circle cx="178" cy="62" r="22" fill="rgba(255,255,255,0.16)" />
+      <text x="120" y="140" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="108" font-weight="700" fill="white">${preset.short}</text>
     </svg>
   `;
 
@@ -159,6 +187,102 @@ function inferFocusFromRole(role = "") {
   }
 
   return "Generalist Search";
+}
+
+function inferCompanyType(company = "") {
+  return companyTypeMap[company] || "technology companies";
+}
+
+function formatResponseMomentum(responseRate) {
+  if (responseRate >= 0.4) {
+    return "strong recruiter traction";
+  }
+
+  if (responseRate >= 0.22) {
+    return "steady recruiter interest";
+  }
+
+  return "early-stage momentum that still has room to grow";
+}
+
+function buildPersonalInsight({ focusLabel, companyTypeLabel, responseRatePercent, responseRate }) {
+  const industryPhrase =
+    focusLabel === "Generalist Search" ? "a broad mix of roles" : `${focusLabel.toLowerCase()} roles`;
+  const momentumPhrase = formatResponseMomentum(responseRate);
+
+  return {
+    emphasis:
+      focusLabel === "Generalist Search"
+        ? "Your search stayed intentionally broad"
+        : `${focusLabel} shaped your search`,
+    body: `You focused heavily on ${industryPhrase} and kept returning to ${companyTypeLabel}. With a ${responseRatePercent}% response rate, your search showed ${momentumPhrase}.`
+  };
+}
+
+function buildPersonaSummary({ focusLabel, companyTypeLabel, responseRate, responseLine, persona }) {
+  const focusPhrase =
+    focusLabel === "Generalist Search" ? "a broad mix of roles" : `${focusLabel.toLowerCase()} roles`;
+  const companyPhrase = companyTypeLabel === "technology companies" ? "tech roles" : companyTypeLabel;
+  const momentumPhrase =
+    responseRate >= 0.35 ? "strong recruiter traction" : responseRate >= 0.22 ? "steady momentum" : "early momentum";
+
+  if (persona === "The Weekend Grinder") {
+    return `You kept returning to ${focusPhrase} and built ${momentumPhrase} while targeting ${companyPhrase}. ${responseLine}.`;
+  }
+
+  if (persona === "The Consistent Applier") {
+    return `You stayed steady with ${focusPhrase} and kept your search moving across ${companyPhrase}. ${responseLine}.`;
+  }
+
+  if (persona === "The Momentum Builder") {
+    return `You focused on ${focusPhrase} and turned that into ${momentumPhrase} with employers in ${companyPhrase}. ${responseLine}.`;
+  }
+
+  if (persona === "The Curious Explorer") {
+    return `You explored a broad mix of roles across ${companyPhrase} while building clarity on where you fit best. ${responseLine}.`;
+  }
+
+  return `You were selective about ${focusPhrase}, with the strongest pull toward ${companyPhrase}. ${responseLine}.`;
+}
+
+function getEffortLevel(totalApplications, distinctWeeks) {
+  if (totalApplications >= 20 || distinctWeeks >= 8) {
+    return "Top effort level";
+  }
+
+  if (totalApplications >= 12 || distinctWeeks >= 5) {
+    return "Highly active";
+  }
+
+  if (totalApplications >= 6) {
+    return "Steady momentum";
+  }
+
+  return "Early momentum";
+}
+
+function getResponseLabel(responseRate) {
+  if (responseRate >= 0.4) {
+    return "Strong signal";
+  }
+
+  if (responseRate >= 0.22) {
+    return "Meaningful traction";
+  }
+
+  return "Building traction";
+}
+
+function getTimelineLabel(spanDays) {
+  if (spanDays >= 90) {
+    return "Long-game energy";
+  }
+
+  if (spanDays >= 45) {
+    return "Consistent streak";
+  }
+
+  return "Focused sprint";
 }
 
 function buildPersona({ totalApplications, weekendShare, distinctWeeks, responseRate, focusLabel }) {
@@ -223,10 +347,66 @@ function getExportGradient(tone) {
   return gradients[tone] || gradients.violet;
 }
 
+function waitForNextPaint() {
+  return new Promise((resolve) => {
+    window.requestAnimationFrame(() => resolve());
+  });
+}
+
+async function waitForWrappedAssets(cardElement) {
+  if (document.fonts?.ready) {
+    try {
+      await document.fonts.ready;
+    } catch (_error) {
+      // If the font promise fails, keep the export moving with system fallbacks.
+    }
+  }
+
+  const images = Array.from(cardElement.querySelectorAll("img"));
+  await Promise.all(
+    images.map(
+      (image) =>
+        new Promise((resolve) => {
+          if (image.complete) {
+            resolve();
+            return;
+          }
+
+          image.addEventListener("load", resolve, { once: true });
+          image.addEventListener("error", resolve, { once: true });
+        })
+    )
+  );
+
+  await waitForNextPaint();
+  await waitForNextPaint();
+}
+
+function getWrappedExportBackgroundColor(cardElement, slideTone) {
+  const computedStyles = window.getComputedStyle(cardElement);
+  const exportBackground = computedStyles.getPropertyValue("--wrapped-export-bg").trim();
+  const cardBackgroundColor = computedStyles.backgroundColor;
+  const fallbackColor = getExportGradient(slideTone)[0];
+
+  if (exportBackground) {
+    return exportBackground;
+  }
+
+  if (
+    cardBackgroundColor &&
+    cardBackgroundColor !== "transparent" &&
+    cardBackgroundColor !== "rgba(0, 0, 0, 0)"
+  ) {
+    return cardBackgroundColor;
+  }
+
+  return fallbackColor;
+}
+
 function triggerCanvasDownload(canvas, fileName) {
   const link = document.createElement("a");
   link.download = fileName;
-  link.href = canvas.toDataURL("image/png");
+  link.href = canvas.toDataURL("image/png", 1.0);
   link.click();
 }
 
@@ -258,6 +438,7 @@ export function computeWrappedData(applications = []) {
   }
 
   const companyCounts = {};
+  const companyTypeCounts = {};
   const focusCounts = {};
   const monthCounts = {};
   const weekdayCounts = {};
@@ -272,6 +453,8 @@ export function computeWrappedData(applications = []) {
 
   sorted.forEach((application) => {
     companyCounts[application.company] = (companyCounts[application.company] || 0) + 1;
+    const companyTypeLabel = inferCompanyType(application.company);
+    companyTypeCounts[companyTypeLabel] = (companyTypeCounts[companyTypeLabel] || 0) + 1;
     const focusLabel = inferFocusFromRole(application.role);
     focusCounts[focusLabel] = (focusCounts[focusLabel] || 0) + 1;
     const monthLabel = getMonthLabel(application.dateApplied);
@@ -290,11 +473,16 @@ export function computeWrappedData(applications = []) {
   });
 
   const topCompany = getTopEntry(companyCounts, "Your target list");
-  const topCompanies = getTopEntries(companyCounts, 4);
+  const topCompanies = getTopEntries(companyCounts, 4).map((entry) => ({
+    ...entry,
+    logo: buildCompanyLogo(entry.label)
+  }));
+  const topCompanyType = getTopEntry(companyTypeCounts, "technology companies");
   const topFocus = getTopEntry(focusCounts, "Generalist Search");
   const topMonth = getTopEntry(monthCounts, getMonthLabel(sorted[0].dateApplied));
   const topWeekday = getTopEntry(weekdayCounts, getWeekdayLabel(sorted[0].dateApplied));
   const distinctWeeks = Object.keys(weekCounts).length;
+  const distinctCompanyCount = Object.keys(companyCounts).length;
   const interviewsAndOffers = statusCounts.Interview + statusCounts.Offer;
   const responseRate = interviewsAndOffers / totalApplications;
   const responseRatePercent = Math.round(responseRate * 100);
@@ -320,17 +508,32 @@ export function computeWrappedData(applications = []) {
     peakMonth: topMonth.label,
     topWeekday: topWeekday.label
   });
+  const personalInsight = buildPersonalInsight({
+    focusLabel: topFocus.label,
+    companyTypeLabel: topCompanyType.label,
+    responseRatePercent,
+    responseRate
+  });
   const responseLine =
     interviewsAndOffers === 0
       ? "No recruiter responses yet"
       : `You heard back from 1 in ${Math.max(1, Math.round(totalApplications / interviewsAndOffers))} applications`;
+  const personaSummary = buildPersonaSummary({
+    focusLabel: topFocus.label,
+    companyTypeLabel: topCompanyType.label,
+    responseRate,
+    responseLine,
+    persona
+  });
 
   return {
     empty: false,
     totalApplications,
+    distinctCompanyCount,
     topCompany,
     topCompanies,
     topCompanyLogo: buildCompanyLogo(topCompany.label),
+    topCompanyType,
     topFocus,
     statusCounts,
     responseRate,
@@ -343,8 +546,10 @@ export function computeWrappedData(applications = []) {
     latestApplicationDate,
     timeRangeLabel: `${formatDate(firstApplicationDate)} to ${formatDate(latestApplicationDate)}`,
     spanDays,
+    personalInsight,
     aiSummary,
-    persona
+    persona,
+    personaSummary
   };
 }
 
@@ -361,7 +566,8 @@ export function buildWrappedSlides(wrapped) {
       eyebrow: "Applications",
       title: "You applied to",
       emphasis: `${wrapped.totalApplications} jobs`,
-      body: `Every application tells the story of a search that kept moving from ${formatDate(
+      context: getEffortLevel(wrapped.totalApplications, wrapped.distinctWeeks),
+      body: `You applied to ${wrapped.distinctCompanyCount} companies, staying consistent in your search from ${formatDate(
         wrapped.firstApplicationDate
       )} through ${formatDate(wrapped.latestApplicationDate)}.`
     },
@@ -404,7 +610,8 @@ export function buildWrappedSlides(wrapped) {
       eyebrow: "Response Rate",
       title: "Recruiter momentum",
       emphasis: `${wrapped.responseRatePercent}%`,
-      body: wrapped.responseLine
+      context: getResponseLabel(wrapped.responseRate),
+      body: `${wrapped.responseLine}. That gave your search a more meaningful story than raw application count alone.`
     },
     {
       id: "funnel",
@@ -427,33 +634,25 @@ export function buildWrappedSlides(wrapped) {
       eyebrow: "Timeline",
       title: "Your job hunt spanned",
       emphasis: `${wrapped.spanDays} days`,
-      body: `${formatDate(wrapped.firstApplicationDate)} to ${formatDate(wrapped.latestApplicationDate)}`
-    },
-    {
-      id: "insight",
-      kind: "insight",
-      tone: slideToneMap.insight,
-      eyebrow: "AI Insight",
-      title: "What your search says",
-      emphasis: null,
-      body: wrapped.aiSummary
+      context: getTimelineLabel(wrapped.spanDays),
+      body: `${formatDate(wrapped.firstApplicationDate)} to ${formatDate(wrapped.latestApplicationDate)}. You kept your search moving across that full stretch.`
     },
     {
       id: "persona",
       kind: "hero",
       tone: slideToneMap.persona,
       eyebrow: "Persona",
-      title: "You are",
+      title: "Your Job Search Persona",
       emphasis: wrapped.persona,
-      body: "A quick read on the pattern behind your applications and momentum."
+      body: wrapped.personaSummary
     },
     {
       id: "final",
       kind: "social-share",
       tone: slideToneMap.final,
       eyebrow: "Share It",
-      title: "Post your Wrapped",
-      body: "Just used Joblets Wrapped to analyze my job search \u{1F447}",
+      title: "Share your Joblets Wrapped",
+      body: "#JobletsWrapped",
       post: {
         profileName: "You",
         likes: buildShareMetrics(wrapped).likes,
@@ -461,7 +660,9 @@ export function buildWrappedSlides(wrapped) {
         previewEyebrow: "Joblets Wrapped",
         previewTitle: `${wrapped.totalApplications} applications`,
         previewSubtitle: wrapped.topFocus.label,
-        previewAccent: wrapped.persona
+        previewAccent: wrapped.persona,
+        caption: "Just used Joblets Wrapped to analyze my job search \u{1F447}",
+        hashtag: "#JobletsWrapped"
       }
     }
   ];
@@ -472,10 +673,12 @@ export async function downloadWrappedSlide(cardElement, slide, slideIndex, total
     throw new Error("Wrapped card is not ready to download.");
   }
 
-  const sourceWidth = cardElement.offsetWidth || 760;
-  const exportScale = Math.max(2, 1080 / sourceWidth);
+  await waitForWrappedAssets(cardElement);
+
+  const exportScale = Math.max(2, window.devicePixelRatio || 1);
+  const exportBackgroundColor = getWrappedExportBackgroundColor(cardElement, slide.tone);
   const renderedCard = await html2canvas(cardElement, {
-    backgroundColor: null,
+    backgroundColor: exportBackgroundColor,
     scale: exportScale,
     useCORS: true,
     logging: false,
@@ -483,12 +686,21 @@ export async function downloadWrappedSlide(cardElement, slide, slideIndex, total
       clonedDocument.querySelectorAll("[data-export-hidden='true']").forEach((element) => {
         element.style.display = "none";
       });
+
+      const clonedCard = clonedDocument.querySelector("[data-export-root='true']");
+      if (clonedCard) {
+        clonedCard.setAttribute("data-exporting", "true");
+        clonedCard.style.backgroundColor = exportBackgroundColor;
+        clonedCard.style.opacity = "1";
+        clonedCard.style.filter = "none";
+        clonedCard.style.backdropFilter = "none";
+      }
     }
   });
 
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
-  canvas.height = 1080;
+  canvas.height = 1920;
   const ctx = canvas.getContext("2d");
 
   if (!ctx) {
@@ -515,9 +727,17 @@ export async function downloadWrappedSlide(cardElement, slide, slideIndex, total
   ctx.fillStyle = orbTwo;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const cardPadding = 86;
-  const destinationSize = canvas.width - cardPadding * 2;
-  ctx.drawImage(renderedCard, cardPadding, cardPadding, destinationSize, destinationSize);
+  const horizontalPadding = 84;
+  const verticalPadding = 110;
+  const availableWidth = canvas.width - horizontalPadding * 2;
+  const availableHeight = canvas.height - verticalPadding * 2;
+  const fitScale = Math.min(availableWidth / renderedCard.width, availableHeight / renderedCard.height);
+  const drawWidth = renderedCard.width * fitScale;
+  const drawHeight = renderedCard.height * fitScale;
+  const drawX = (canvas.width - drawWidth) / 2;
+  const drawY = (canvas.height - drawHeight) / 2;
+
+  ctx.drawImage(renderedCard, drawX, drawY, drawWidth, drawHeight);
 
   triggerCanvasDownload(canvas, buildExportFileName(slide, slideIndex, totalSlides));
 }

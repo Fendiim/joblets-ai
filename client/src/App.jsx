@@ -16,14 +16,10 @@ const STATUS_OPTIONS = [
 
 const EDITABLE_STATUSES = STATUS_OPTIONS.slice(1);
 const REFRESH_STEPS = ["Scanning inbox...", "Analyzing emails...", "Extracting job data..."];
-const WRAPPED_GENERATION_STEPS = [
-  "Analyzing your applications...",
-  "Detecting patterns...",
-  "Calculating insights...",
-  "Designing your wrapped..."
-];
 const WRAPPED_AUTOPLAY_MS = 3600;
 const WRAPPED_HOLD_NAV_GUARD_MS = 180;
+const WRAPPED_INTRO_MS = 1500;
+const WRAPPED_SLIDE_TRANSITION_MS = 300;
 
 const defaultInsights = {
   totalApplications: 0,
@@ -250,284 +246,441 @@ function AuthView({ authMode, authForm, loading, feedback, onAuthModeChange, onA
     </div>
   );
 }
-function WrappedSlide({
+function WrappedCard({
   slide,
-  slideIndex,
-  totalSlides,
   wrappedData,
-  autoplayProgress,
+  isManuallyPaused,
+  transitionDirection,
+  animationState,
   cardRef,
   downloadLabel,
   onDownload,
+  onTogglePause,
   onPrevious,
   onNext,
   onHoldStart,
-  onHoldEnd
+  onHoldEnd,
+  isInteractive = true,
+  previousDisabled = false,
+  nextDisabled = false
 }) {
   const showDownloaded = downloadLabel === "Downloaded!";
   const showDownloading = downloadLabel === "Downloading...";
+  const defaultBodyClass = `wrapped-card-body ${slide.kind === "insight" ? "wrapped-card-body-insight" : ""}`;
 
-  return (
-    <section
-      className={`wrapped-stage wrapped-tone-${slide.tone}`}
-    >
-      <div className="wrapped-tap-zones" aria-hidden="true">
-        <button
-          className="wrapped-tap-zone wrapped-tap-zone-left"
-          type="button"
-          onClick={onPrevious}
-          tabIndex={-1}
-        />
-        <button
-          className="wrapped-tap-zone wrapped-tap-zone-right"
-          type="button"
-          onClick={onNext}
-          tabIndex={-1}
-        />
+  function renderNarrativeContent() {
+    if (slide.kind === "pipeline") {
+      const stages = getWrappedPipelineStages(slide.funnel);
+
+      return (
+        <>
+          <div className="wrapped-pipeline-text">
+            <p className="wrapped-card-title">{slide.title}</p>
+            {slide.emphasis && <h2 className="wrapped-card-emphasis">{slide.emphasis}</h2>}
+            {slide.context && <p className="wrapped-stat-context">{slide.context}</p>}
+            {slide.body && <p className={defaultBodyClass}>{slide.body}</p>}
+          </div>
+          <div className="wrapped-pipeline-summary" aria-label="Job funnel status counts">
+            {stages.map((stage) => (
+              <div key={stage.key} className="wrapped-pipeline-summary-row">
+                <span className="wrapped-pipeline-summary-label">{stage.label}</span>
+                <strong className="wrapped-pipeline-summary-value">{stage.value}</strong>
+              </div>
+            ))}
+          </div>
+        </>
+      );
+    }
+
+    if (slide.kind === "social-share") {
+      return (
+        <>
+          <p className="wrapped-card-title wrapped-card-title-share">{slide.title}</p>
+          <p className="wrapped-social-share-tag">{slide.body}</p>
+          <p className="wrapped-card-body">
+            Turn your job search into something polished enough to post, share, and remember.
+          </p>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <p className="wrapped-card-title">{slide.title}</p>
+        {slide.emphasis && <h2 className="wrapped-card-emphasis">{slide.emphasis}</h2>}
+        {slide.context && <p className="wrapped-stat-context">{slide.context}</p>}
+        {slide.body && <p className={defaultBodyClass}>{slide.body}</p>}
+      </>
+    );
+  }
+
+  function renderHeroVisual() {
+    if (slide.kind === "response") {
+      return (
+        <div className="wrapped-stat-visual wrapped-stat-visual-response">
+          <span className="wrapped-stat-visual-label">Response Rate</span>
+          <strong>{slide.emphasis}</strong>
+          <small>{wrappedData.statusCounts.Interview + wrappedData.statusCounts.Offer} recruiter responses</small>
+        </div>
+      );
+    }
+
+    if (slide.kind === "focus") {
+      return (
+        <div className="wrapped-stat-visual wrapped-stat-visual-focus">
+          <span className="wrapped-stat-visual-label">Core Focus</span>
+          <strong>{wrappedData.topFocus.label}</strong>
+          <small>{wrappedData.topCompanyType.label}</small>
+        </div>
+      );
+    }
+
+    if (slide.kind === "persona") {
+      return (
+        <div className="wrapped-stat-visual wrapped-stat-visual-persona">
+          <span className="wrapped-stat-visual-label">Persona</span>
+          <strong>{slide.emphasis}</strong>
+          <small>{wrappedData.responseLine}</small>
+        </div>
+      );
+    }
+
+    return (
+      <div className="wrapped-stat-visual wrapped-stat-visual-total">
+        <span className="wrapped-stat-visual-label">{slide.eyebrow}</span>
+        <strong>{slide.emphasis}</strong>
+        <small>{wrappedData.distinctCompanyCount} companies reached</small>
       </div>
-      <div className="wrapped-motion wrapped-motion-one" aria-hidden="true" />
-      <div className="wrapped-motion wrapped-motion-two" aria-hidden="true" />
+    );
+  }
 
-      <div className="wrapped-stage-inner">
-        <div className="wrapped-progress-bars" aria-label="Story progress">
-          {Array.from({ length: totalSlides }, (_, index) => {
-            const progressValue = index < slideIndex ? 1 : index === slideIndex ? autoplayProgress : 0;
+  function renderVisualContent() {
+    if (slide.kind === "company-rank") {
+      return (
+        <div className="wrapped-company-spotlight">
+          <div className="wrapped-company-logo-shell">
+            <img className="wrapped-company-logo" src={slide.logo.src} alt={slide.logo.alt} />
+          </div>
+          <div className="wrapped-company-name-block">
+            <p className="wrapped-company-name">{slide.emphasis}</p>
+            <p className="wrapped-company-subtitle">{slide.body}</p>
+          </div>
 
-            return (
-              <span key={`wrapped-progress-${index}`} className="wrapped-progress-segment">
-                <span
-                  className="wrapped-progress-fill"
-                  style={{ transform: `scaleX(${progressValue})` }}
-                />
-              </span>
-            );
-          })}
-        </div>
-
-        <div className="wrapped-stage-meta">
-          <span className="wrapped-overline">{slide.eyebrow}</span>
-          <span className="wrapped-step">
-            {slideIndex + 1} / {totalSlides}
-          </span>
-        </div>
-
-        <div className="wrapped-card-shell">
-          <article
-            key={slide.id}
-            ref={cardRef}
-            className={`wrapped-card wrapped-card-${slide.kind}`}
-            data-export-root="true"
-            onMouseDown={onHoldStart}
-            onMouseUp={onHoldEnd}
-            onTouchStart={onHoldStart}
-            onTouchEnd={onHoldEnd}
-            onTouchCancel={onHoldEnd}
-          >
-            <div className="wrapped-card-copy">
-              {slide.kind !== "social-share" && <p className="wrapped-card-title">{slide.title}</p>}
-              {slide.kind !== "social-share" && slide.emphasis && <h2 className="wrapped-card-emphasis">{slide.emphasis}</h2>}
-
-              {slide.kind === "company-rank" ? (
-                <>
-                  <div className="wrapped-company-spotlight">
-                    <div className="wrapped-company-logo-shell">
-                      <img className="wrapped-company-logo" src={slide.logo.src} alt={slide.logo.alt} />
-                    </div>
-                    <div className="wrapped-company-name-block">
-                      <p className="wrapped-company-name">{slide.emphasis}</p>
-                      <p className="wrapped-company-subtitle">{slide.body}</p>
-                    </div>
+          {slide.rankings?.length > 0 && (
+            <div className="wrapped-company-rankings">
+              {slide.rankings.map((entry) => (
+                <div key={entry.label} className="wrapped-company-rank-row">
+                  <span>{entry.rank}.</span>
+                  <div className="wrapped-company-rank-logo-shell">
+                    <img className="wrapped-company-rank-logo" src={entry.logo.src} alt={entry.logo.alt} />
                   </div>
-
-                  {slide.rankings?.length > 0 && (
-                    <div className="wrapped-company-rankings">
-                      {slide.rankings.map((entry) => (
-                        <div key={entry.label} className="wrapped-company-rank-row">
-                          <span>{entry.rank}.</span>
-                          <strong>{entry.label}</strong>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : slide.kind === "status-grid" ? (
-                <div className="wrapped-status-grid">
-                  {Object.entries(slide.stats).map(([label, value]) => (
-                    <div key={label} className={`wrapped-status-pill ${label.toLowerCase()}`}>
-                      <span>{label}</span>
-                      <strong>{value}</strong>
-                    </div>
-                  ))}
+                  <strong>{entry.label}</strong>
                 </div>
-              ) : slide.kind === "pipeline" ? (
-                (() => {
-                  const stages = getWrappedPipelineStages(slide.funnel);
-
-                  return (
-                    <>
-                      <div className="wrapped-pipeline-card" role="img" aria-label="Job application funnel showing applied, interview, offer, and rejected counts">
-                        <div className="wrapped-pipeline-heading-row" aria-hidden="true">
-                          <span>Applied</span>
-                          <span>Interview</span>
-                          <span>Outcome</span>
-                        </div>
-                        <div className="wrapped-pipeline-list">
-                          {stages.map((stage, index) => (
-                            <div key={stage.key} className="wrapped-pipeline-stage-group">
-                              <div
-                                className={`wrapped-pipeline-stage ${stage.key}`}
-                                style={{ width: stage.width, minHeight: stage.minHeight }}
-                              >
-                                <span className="wrapped-pipeline-stage-label">{stage.label}</span>
-                                <strong className="wrapped-pipeline-stage-value">{stage.value}</strong>
-                              </div>
-                              {index < stages.length - 1 && <div className="wrapped-pipeline-connector" aria-hidden="true" />}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <p className="wrapped-card-body wrapped-card-body-funnel">{slide.body}</p>
-                    </>
-                  );
-                })()
-              ) : slide.kind === "timeline" ? (
-                <>
-                  <p className="wrapped-card-body">{slide.body}</p>
-                  <div className="wrapped-timeline">
-                    <div className="wrapped-timeline-node">
-                      <span>First</span>
-                      <strong>{formatDate(wrappedData.firstApplicationDate)}</strong>
-                    </div>
-                    <div className="wrapped-timeline-line" aria-hidden="true" />
-                    <div className="wrapped-timeline-node">
-                      <span>Latest</span>
-                    <strong>{formatDate(wrappedData.latestApplicationDate)}</strong>
-                  </div>
-                </div>
-              </>
-              ) : slide.kind === "social-share" ? (
-                <div className="wrapped-social-post">
-                  <div className="wrapped-social-post-shell">
-                    <div className="wrapped-social-post-header">
-                      <div className="wrapped-social-avatar" aria-hidden="true">
-                        {slide.post.profileName.slice(0, 1)}
-                      </div>
-                      <div className="wrapped-social-meta">
-                        <strong>{slide.post.profileName}</strong>
-                        <span>LinkedIn mock post</span>
-                      </div>
-                    </div>
-
-                    <p className="wrapped-social-caption">{slide.body}</p>
-
-                    <div className="wrapped-social-preview">
-                      <div className="wrapped-social-preview-gradient" aria-hidden="true" />
-                      <div className="wrapped-social-preview-content">
-                        <p>{slide.post.previewEyebrow}</p>
-                        <strong>{slide.post.previewTitle}</strong>
-                        <span>{slide.post.previewSubtitle}</span>
-                        <small>{slide.post.previewAccent}</small>
-                      </div>
-                    </div>
-
-                    <div className="wrapped-social-engagement">
-                      <span>{slide.post.likes} likes</span>
-                      <span>{slide.post.comments} comments</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className={`wrapped-card-body ${slide.kind === "insight" ? "wrapped-card-body-insight" : ""}`}>
-                  {slide.body}
-                </p>
-              )}
+              ))}
             </div>
+          )}
+        </div>
+      );
+    }
 
-            <div className="wrapped-card-footer">
-              <div className="wrapped-nav-buttons">
-                <button className="wrapped-nav-button" type="button" onClick={onPrevious} disabled={slideIndex === 0}>
-                  Previous
-                </button>
-                <button
-                  className="wrapped-nav-button"
-                  type="button"
-                  onClick={onNext}
-                  disabled={slideIndex === totalSlides - 1}
-                >
-                  Next
-                </button>
+    if (slide.kind === "status-grid") {
+      return (
+        <div className="wrapped-status-grid">
+          {Object.entries(slide.stats).map(([label, value]) => (
+            <div key={label} className={`wrapped-status-pill ${label.toLowerCase()}`}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (slide.kind === "pipeline") {
+      const stages = getWrappedPipelineStages(slide.funnel);
+
+      return (
+        <div className="wrapped-pipeline-visual-shell">
+          <div className="wrapped-pipeline-card" role="img" aria-label="Job application funnel showing applied, interview, offer, and rejected counts">
+            <div className="wrapped-pipeline-heading-row" aria-hidden="true">
+              <span>Applied</span>
+              <span>Interview</span>
+              <span>Outcome</span>
+            </div>
+            <div className="wrapped-pipeline-list">
+              {stages.map((stage, index) => (
+                <div key={stage.key} className="wrapped-pipeline-stage-group">
+                  <div
+                    className={`wrapped-pipeline-stage ${stage.key}`}
+                    style={{ width: stage.width, minHeight: stage.minHeight }}
+                  >
+                    <span className="wrapped-pipeline-stage-label">{stage.label}</span>
+                    <strong className="wrapped-pipeline-stage-value">{stage.value}</strong>
+                  </div>
+                  {index < stages.length - 1 && <div className="wrapped-pipeline-connector" aria-hidden="true" />}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (slide.kind === "timeline") {
+      return (
+        <div className="wrapped-timeline">
+          <div className="wrapped-timeline-node">
+            <span>First</span>
+            <strong>{formatDate(wrappedData.firstApplicationDate)}</strong>
+          </div>
+          <div className="wrapped-timeline-line" aria-hidden="true" />
+          <div className="wrapped-timeline-node">
+            <span>Latest</span>
+            <strong>{formatDate(wrappedData.latestApplicationDate)}</strong>
+          </div>
+        </div>
+      );
+    }
+
+    if (slide.kind === "social-share") {
+      return (
+        <div className="wrapped-social-post">
+          <div className="wrapped-social-post-shell">
+            <div className="wrapped-social-post-header">
+              <div className="wrapped-social-avatar" aria-hidden="true">
+                {slide.post.profileName.slice(0, 1)}
+              </div>
+              <div className="wrapped-social-meta">
+                <strong>{slide.post.profileName}</strong>
+                <span>LinkedIn mock post</span>
               </div>
             </div>
 
-            <div className="wrapped-download-control" data-export-hidden="true">
-              <button
-                className={`wrapped-icon-action ${showDownloaded ? "is-confirmed" : ""}`}
-                type="button"
-                onClick={onDownload}
-                aria-label={showDownloading ? "Downloading" : "Download"}
-                title="Download"
-              >
-                {showDownloading ? (
-                  <span className="wrapped-icon-spinner" aria-hidden="true" />
-                ) : showDownloaded ? (
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      d="M20 7L9 18l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      d="M12 4v10m0 0l-4-4m4 4l4-4M5 19h14"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </button>
-              <span className="wrapped-icon-tooltip" role="tooltip">
-                Download
-              </span>
-              <span className={`wrapped-download-toast ${showDownloaded ? "is-visible" : ""}`} aria-live="polite">
-                Downloaded!
-              </span>
+            <p className="wrapped-social-caption">{slide.post.caption}</p>
+
+            <div className="wrapped-social-preview">
+              <div className="wrapped-social-preview-gradient" aria-hidden="true" />
+              <div className="wrapped-social-preview-content">
+                <p>{slide.post.previewEyebrow}</p>
+                <strong>{slide.post.previewTitle}</strong>
+                <span>{slide.post.previewSubtitle}</span>
+                <small>{slide.post.previewAccent}</small>
+              </div>
             </div>
-          </article>
+
+            <p className="wrapped-social-hashtag">{slide.post.hashtag}</p>
+
+            <div className="wrapped-social-engagement">
+              <span>{slide.post.likes} likes</span>
+              <span>{slide.post.comments} comments</span>
+            </div>
+          </div>
         </div>
+      );
+    }
+
+    if (slide.kind === "insight") {
+      return (
+        <div className="wrapped-quote-visual">
+          <span className="wrapped-stat-visual-label">{slide.eyebrow}</span>
+          <strong>{wrappedData.persona}</strong>
+          <small>{wrappedData.topFocus.label}</small>
+        </div>
+      );
+    }
+
+    return renderHeroVisual();
+  }
+
+  return (
+    <article
+      ref={cardRef}
+      className={`wrapped-card wrapped-card-${slide.kind} wrapped-card-transition-${animationState} wrapped-card-direction-${transitionDirection} ${isInteractive ? "is-interactive" : "is-static"}`}
+      data-export-root="true"
+      onMouseDown={isInteractive ? onHoldStart : undefined}
+      onMouseUp={isInteractive ? onHoldEnd : undefined}
+      onTouchStart={isInteractive ? onHoldStart : undefined}
+      onTouchEnd={isInteractive ? onHoldEnd : undefined}
+      onTouchCancel={isInteractive ? onHoldEnd : undefined}
+    >
+      {isInteractive && (
+        <div className="wrapped-playback-control" data-export-hidden="true">
+          <button
+            className={`wrapped-icon-action wrapped-pause-action ${isManuallyPaused ? "is-paused" : ""}`}
+            type="button"
+            onClick={onTogglePause}
+            onMouseDown={(event) => event.stopPropagation()}
+            onTouchStart={(event) => event.stopPropagation()}
+            aria-label={isManuallyPaused ? "Resume slideshow" : "Pause slideshow"}
+            title={isManuallyPaused ? "Play" : "Pause"}
+          >
+            {isManuallyPaused ? (
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 7.2v9.6L17 12 9 7.2z" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M8.5 6.5v11m7-11v11"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+      )}
+
+      <div className="wrapped-card-main">
+        <div className="wrapped-card-column wrapped-card-column-text">{renderNarrativeContent()}</div>
+        <div className="wrapped-card-column wrapped-card-column-visual">{renderVisualContent()}</div>
       </div>
-    </section>
+
+      {isInteractive && (
+        <>
+          <div className="wrapped-side-navigation" data-export-hidden="true">
+            <button
+              className="wrapped-side-arrow wrapped-side-arrow-left"
+              type="button"
+              onClick={onPrevious}
+              disabled={previousDisabled}
+              aria-label="Previous slide"
+              title="Previous"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M14.5 6.5L9 12l5.5 5.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            <button
+              className="wrapped-side-arrow wrapped-side-arrow-right"
+              type="button"
+              onClick={onNext}
+              disabled={nextDisabled}
+              aria-label="Next slide"
+              title="Next"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M9.5 6.5L15 12l-5.5 5.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div className="wrapped-download-control" data-export-hidden="true">
+            <button
+              className={`wrapped-icon-action ${showDownloaded ? "is-confirmed" : ""}`}
+              type="button"
+              onClick={onDownload}
+              aria-label={showDownloading ? "Downloading" : "Download"}
+              title="Download"
+            >
+              {showDownloading ? (
+                <span className="wrapped-icon-spinner" aria-hidden="true" />
+              ) : showDownloaded ? (
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M20 7L9 18l-5-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 4v10m0 0l-4-4m4 4l4-4M5 19h14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+            <span className="wrapped-icon-tooltip" role="tooltip">
+              Download
+            </span>
+            <span className={`wrapped-download-toast ${showDownloaded ? "is-visible" : ""}`} aria-live="polite">
+              Downloaded!
+            </span>
+          </div>
+        </>
+      )}
+    </article>
   );
 }
 
 function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
-  const [phase, setPhase] = useState("landing");
-  const [loadingStepIndex, setLoadingStepIndex] = useState(0);
+  const [phase, setPhase] = useState("intro");
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [autoplayProgress, setAutoplayProgress] = useState(0);
+  const [transitionDirection, setTransitionDirection] = useState("next");
+  const [transitionToken, setTransitionToken] = useState(0);
+  const [exitingSlide, setExitingSlide] = useState(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isHoldPaused, setIsHoldPaused] = useState(false);
+  const [isManuallyPaused, setIsManuallyPaused] = useState(false);
   const [downloadedSlideId, setDownloadedSlideId] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
   const cardRef = useRef(null);
   const downloadTimerRef = useRef(null);
+  const autoplayIntervalRef = useRef(null);
+  const transitionTimerRef = useRef(null);
+  const autoplayProgressRef = useRef(0);
   const holdStartedAtRef = useRef(0);
   const holdResumeTimerRef = useRef(null);
   const holdActiveRef = useRef(false);
-  const isAutoplayPaused = isHoldPaused || isDownloading;
+  const isAutoplayPaused = isHoldPaused || isDownloading || isManuallyPaused || isTransitioning;
+  const autoplaySlideKey =
+    phase === "slides" && slides[activeSlideIndex]
+      ? `${activeSlideIndex}:${slides[activeSlideIndex].id}`
+      : null;
+
+  function clearAutoplayInterval() {
+    if (autoplayIntervalRef.current) {
+      window.clearInterval(autoplayIntervalRef.current);
+      autoplayIntervalRef.current = null;
+    }
+  }
+
+  function clearTransitionTimer() {
+    if (transitionTimerRef.current) {
+      window.clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+    }
+  }
 
   useEffect(() => {
-    setPhase("landing");
-    setLoadingStepIndex(0);
+    clearAutoplayInterval();
+    clearTransitionTimer();
+    setPhase("intro");
     setActiveSlideIndex(0);
     setAutoplayProgress(0);
+    autoplayProgressRef.current = 0;
+    setTransitionDirection("next");
+    setTransitionToken(0);
+    setExitingSlide(null);
+    setIsTransitioning(false);
     setIsHoldPaused(false);
+    setIsManuallyPaused(false);
     setDownloadedSlideId("");
     setIsDownloading(false);
     holdActiveRef.current = false;
@@ -535,6 +688,9 @@ function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
 
   useEffect(() => {
     return () => {
+      clearAutoplayInterval();
+      clearTransitionTimer();
+
       if (downloadTimerRef.current) {
         window.clearTimeout(downloadTimerRef.current);
       }
@@ -546,27 +702,56 @@ function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
   }, []);
 
   useEffect(() => {
-    if (phase !== "loading") {
-      setLoadingStepIndex(0);
+    if (phase !== "intro") {
       return undefined;
     }
-
-    const interval = window.setInterval(() => {
-      setLoadingStepIndex((current) =>
-        current === WRAPPED_GENERATION_STEPS.length - 1 ? current : current + 1
-      );
-    }, 1100);
 
     const completion = window.setTimeout(() => {
       setPhase("slides");
       setActiveSlideIndex(0);
-    }, WRAPPED_GENERATION_STEPS.length * 1100 + 650);
+    }, WRAPPED_INTRO_MS);
 
     return () => {
-      window.clearInterval(interval);
       window.clearTimeout(completion);
     };
   }, [phase]);
+
+  function navigateSlide(direction) {
+    if (isTransitioning || phase !== "slides") {
+      return;
+    }
+
+    clearAutoplayInterval();
+    clearTransitionTimer();
+
+    const nextDirection = direction === "previous" ? "previous" : "next";
+    const nextIndex =
+      nextDirection === "next"
+        ? Math.min(activeSlideIndex + 1, slides.length - 1)
+        : Math.max(activeSlideIndex - 1, 0);
+
+    if (nextIndex === activeSlideIndex) {
+      return;
+    }
+
+    setTransitionDirection(nextDirection);
+    setExitingSlide({
+      slide: slides[activeSlideIndex],
+      slideIndex: activeSlideIndex,
+      transitionDirection: nextDirection,
+      token: transitionToken
+    });
+    setIsTransitioning(true);
+    autoplayProgressRef.current = 0;
+    setAutoplayProgress(0);
+    setTransitionToken((token) => token + 1);
+    setActiveSlideIndex(nextIndex);
+
+    transitionTimerRef.current = window.setTimeout(() => {
+      setExitingSlide(null);
+      setIsTransitioning(false);
+    }, WRAPPED_SLIDE_TRANSITION_MS);
+  }
 
   useEffect(() => {
     if (phase !== "slides") {
@@ -575,11 +760,11 @@ function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
 
     const handleKeyDown = (event) => {
       if (event.key === "ArrowRight") {
-        setActiveSlideIndex((current) => Math.min(current + 1, slides.length - 1));
+        navigateSlide("next");
       }
 
       if (event.key === "ArrowLeft") {
-        setActiveSlideIndex((current) => Math.max(current - 1, 0));
+        navigateSlide("previous");
       }
     };
 
@@ -588,41 +773,32 @@ function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
   }, [phase, slides.length]);
 
   useEffect(() => {
-    if (phase !== "slides") {
-      setAutoplayProgress(0);
+    clearAutoplayInterval();
+
+    if (!autoplaySlideKey || isAutoplayPaused) {
       return undefined;
     }
 
-    setAutoplayProgress(0);
-    return undefined;
-  }, [phase, activeSlideIndex]);
+    let elapsedMs = autoplayProgressRef.current * WRAPPED_AUTOPLAY_MS;
+    const tickMs = 60;
 
-  useEffect(() => {
-    if (phase !== "slides" || isAutoplayPaused || slides.length === 0) {
-      return undefined;
-    }
+    autoplayIntervalRef.current = window.setInterval(() => {
+      elapsedMs = Math.min(elapsedMs + tickMs, WRAPPED_AUTOPLAY_MS);
+      const nextProgress = Math.min(elapsedMs / WRAPPED_AUTOPLAY_MS, 1);
 
-    const tickMs = 40;
-    const progressStep = tickMs / WRAPPED_AUTOPLAY_MS;
-    const interval = window.setInterval(() => {
-      setAutoplayProgress((current) => {
-        if (current + progressStep >= 1) {
-          if (activeSlideIndex >= slides.length - 1) {
-            return 1;
-          }
+      autoplayProgressRef.current = nextProgress;
+      setAutoplayProgress(nextProgress);
 
-          window.setTimeout(() => {
-            setActiveSlideIndex((slidePosition) => Math.min(slidePosition + 1, slides.length - 1));
-          }, 0);
-          return 0;
-        }
-
-        return current + progressStep;
-      });
+      if (nextProgress >= 1) {
+        clearAutoplayInterval();
+        navigateSlide("next");
+      }
     }, tickMs);
 
-    return () => window.clearInterval(interval);
-  }, [phase, isAutoplayPaused, activeSlideIndex, slides.length]);
+    return () => {
+      clearAutoplayInterval();
+    };
+  }, [autoplaySlideKey, isAutoplayPaused]);
 
   useEffect(() => {
     if (!holdActiveRef.current) {
@@ -644,16 +820,8 @@ function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
     };
   }, [isHoldPaused]);
 
-  function navigateSlide(direction) {
-    setActiveSlideIndex((current) => {
-      const next =
-        direction === "next"
-          ? Math.min(current + 1, slides.length - 1)
-          : Math.max(current - 1, 0);
-
-      return next;
-    });
-    setAutoplayProgress(0);
+  function toggleManualPause() {
+    setIsManuallyPaused((current) => !current);
   }
 
   function beginHoldPause() {
@@ -688,6 +856,23 @@ function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
     setIsHoldPaused(false);
   }
 
+  if (!wrappedData || wrappedData.empty) {
+    return (
+      <section className="wrapped-empty">
+        <div className="wrapped-empty-card">
+          <p className="eyebrow">Joblets Wrapped</p>
+          <h2>Not enough data yet.</h2>
+          <p>Start applying to jobs to generate your Wrapped.</p>
+          <button className="primary-button" type="button" onClick={onNavigateDashboard}>
+            Back to dashboard
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  const currentSlide = slides[activeSlideIndex];
+
   async function handleDownloadCurrentSlide() {
     if (!currentSlide || !cardRef.current || isDownloading) {
       return;
@@ -710,87 +895,108 @@ function WrappedExperience({ wrappedData, slides, onNavigateDashboard }) {
     }
   }
 
-  if (!wrappedData || wrappedData.empty) {
-    return (
-      <section className="wrapped-empty">
-        <div className="wrapped-empty-card">
-          <p className="eyebrow">Joblets Wrapped</p>
-          <h2>Not enough data yet.</h2>
-          <p>Start applying to jobs to generate your Wrapped.</p>
-          <button className="primary-button" type="button" onClick={onNavigateDashboard}>
-            Back to dashboard
-          </button>
-        </div>
-      </section>
-    );
-  }
-
-  const currentSlide = slides[activeSlideIndex];
-  const generationProgress = ((loadingStepIndex + 1) / WRAPPED_GENERATION_STEPS.length) * 100;
-
   return (
     <section className="wrapped-page">
-      {phase === "landing" && (
-        <div className="wrapped-landing">
-          <div className="wrapped-landing-card">
-            <p className="eyebrow">Joblets Wrapped</p>
-            <h2>Your Job Hunt, Wrapped</h2>
-            <p className="wrapped-landing-subtitle">
-              A personalized summary of your job search powered by AI
-            </p>
-            <p className="wrapped-landing-description">
-              Turn your job applications into insights, trends, and shareable moments.
-            </p>
-            <button className="primary-button wrapped-generate-button" type="button" onClick={() => setPhase("loading")}>
-              Generate My Wrapped
-            </button>
-          </div>
-        </div>
-      )}
-
-      {phase === "loading" && (
-        <div className="wrapped-loading-screen" aria-live="polite">
-          <div className="wrapped-loading-card">
-            <div className="wrapped-loading-spinner" aria-hidden="true" />
-            <p className="wrapped-loading-label">Building your story</p>
-            <h2>{WRAPPED_GENERATION_STEPS[loadingStepIndex]}</h2>
-            <p>Weâ€™re turning your job search history into a polished shareable recap.</p>
-            <div className="wrapped-progress">
-              <div className="wrapped-progress-bar" style={{ width: `${generationProgress}%` }} />
-            </div>
-            <div className="wrapped-progress-steps">
-              {WRAPPED_GENERATION_STEPS.map((step, index) => (
-                <span key={step} className={index <= loadingStepIndex ? "active" : ""}>
-                  {step}
-                </span>
-              ))}
-            </div>
+      {phase === "intro" && (
+        <div className="wrapped-intro-overlay" aria-live="polite">
+          <div className="wrapped-intro-content">
+            <p className="wrapped-intro-kicker">Joblets Wrapped</p>
+            <h2>Your Job Search, Wrapped</h2>
           </div>
         </div>
       )}
 
       {phase === "slides" && currentSlide && (
-        <WrappedSlide
-          slide={currentSlide}
-          slideIndex={activeSlideIndex}
-          totalSlides={slides.length}
-          wrappedData={wrappedData}
-          autoplayProgress={autoplayProgress}
-          cardRef={cardRef}
-          downloadLabel={
-            isDownloading ? "Downloading..." : downloadedSlideId === currentSlide.id ? "Downloaded!" : "Download"
-          }
-          onDownload={handleDownloadCurrentSlide}
-          onPrevious={() => navigateSlide("previous")}
-          onNext={() => navigateSlide("next")}
-          onHoldStart={beginHoldPause}
-          onHoldEnd={releaseHoldPause}
-        />
+        <div className="wrapped-slideshow-shell">
+          <section className={`wrapped-stage wrapped-tone-${currentSlide.tone}`}>
+            <div className="wrapped-tap-zones" aria-hidden="true">
+              <button
+                className="wrapped-tap-zone wrapped-tap-zone-left"
+                type="button"
+                onClick={() => navigateSlide("previous")}
+                tabIndex={-1}
+              />
+              <button
+                className="wrapped-tap-zone wrapped-tap-zone-right"
+                type="button"
+                onClick={() => navigateSlide("next")}
+                tabIndex={-1}
+              />
+            </div>
+            <div className="wrapped-motion wrapped-motion-one" aria-hidden="true" />
+            <div className="wrapped-motion wrapped-motion-two" aria-hidden="true" />
+
+            <div className="wrapped-stage-inner">
+              <div className="wrapped-progress-bars" style={{ "--wrapped-slide-count": slides.length }} aria-label="Story progress">
+                {Array.from({ length: slides.length }, (_, index) => {
+                  const progressValue = index < activeSlideIndex ? 1 : index === activeSlideIndex ? autoplayProgress : 0;
+
+                  return (
+                    <span key={`wrapped-progress-${index}`} className="wrapped-progress-segment">
+                      <span className="wrapped-progress-fill" style={{ transform: `scaleX(${progressValue})` }} />
+                    </span>
+                  );
+                })}
+              </div>
+
+              <div className="wrapped-stage-meta">
+                <span className="wrapped-overline">{currentSlide.eyebrow}</span>
+                <span className="wrapped-step">
+                  {activeSlideIndex + 1} / {slides.length}
+                </span>
+              </div>
+
+              <div className="wrapped-card-shell">
+                <div className="wrapped-card-stack">
+                  {exitingSlide && (
+                    <WrappedCard
+                      key={`${exitingSlide.slide.id}-exit-${transitionToken}`}
+                      slide={exitingSlide.slide}
+                      wrappedData={wrappedData}
+                      isManuallyPaused={isManuallyPaused}
+                      transitionDirection={exitingSlide.transitionDirection}
+                      animationState="exit"
+                      downloadLabel=""
+                      onDownload={() => {}}
+                      onTogglePause={() => {}}
+                      onPrevious={() => {}}
+                      onNext={() => {}}
+                      onHoldStart={() => {}}
+                      onHoldEnd={() => {}}
+                      isInteractive={false}
+                    />
+                  )}
+
+                  <WrappedCard
+                    key={`${currentSlide.id}-${transitionToken}`}
+                    slide={currentSlide}
+                    wrappedData={wrappedData}
+                    isManuallyPaused={isManuallyPaused}
+                    transitionDirection={transitionDirection}
+                    animationState={isTransitioning ? "enter" : "active"}
+                    cardRef={cardRef}
+                    downloadLabel={
+                      isDownloading ? "Downloading..." : downloadedSlideId === currentSlide.id ? "Downloaded!" : "Download"
+                    }
+                    onDownload={handleDownloadCurrentSlide}
+                    onTogglePause={toggleManualPause}
+                    onPrevious={() => navigateSlide("previous")}
+                    onNext={() => navigateSlide("next")}
+                    onHoldStart={beginHoldPause}
+                    onHoldEnd={releaseHoldPause}
+                    isInteractive
+                    previousDisabled={activeSlideIndex === 0 || isTransitioning}
+                    nextDisabled={activeSlideIndex === slides.length - 1 || isTransitioning}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
       )}
     </section>
   );
 }
-
 function DashboardView({
   user,
   feedback,
@@ -1536,6 +1742,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
